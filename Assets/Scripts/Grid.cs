@@ -34,8 +34,14 @@ namespace AssemblyCSharp
 
 			float originX = -((desiredDims.x * prefabWidth) / 2);
 
+			originX += prefabWidth / 2;
+
 			for (int i = 0; i < desiredDims.x; i++)
+			{
+
 				columns.Add (new Column (new Vector3 (originX, originY), Convert.ToInt32 (desiredDims.y)));
+				originX += prefabWidth;
+			}
 		}
 
 		public static void Add(GameObject go)

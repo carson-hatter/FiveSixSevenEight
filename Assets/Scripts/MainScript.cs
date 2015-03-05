@@ -11,13 +11,18 @@ public class MainScript : MonoBehaviour {
 	public GameObject FloorPrefab;
 	private GameObject floorInstantiated = null;
 
+	public GameObject WallPrefab;
+	private List<GameObject> wallsInstantiated = null;
+
 	public GameObject [] NumberPrefabs;
 
 	public Vector2 GridDimensions;
 
-	public float DropYCoord;
+	//public float DropYCoord;
 
 	public float DropPauseInSeconds;
+
+	private float lastDrop;
 
 	private System.Random random;
 
@@ -26,14 +31,31 @@ public class MainScript : MonoBehaviour {
 	{
 		try
 		{
+			lastDrop = Time.realtimeSinceStartup;
+
 			random = new System.Random();
 
 			if(NumberPrefabs.Length <= 0)
 				throw new NullReferenceException("No number prefabs found");
 
-			float numberPrefabWidth = NumberPrefabs[0].GetComponent<SpriteRenderer>().bounds.size.x;
+			float numberPrefabWidth = NumberPrefabs[0].GetComponent<SpriteRenderer>().bounds.size.x; // number prefab sprite will have to be square
 
 			floorInstantiated = Instantiate(FloorPrefab) as GameObject;
+
+			floorInstantiated.transform.position = new Vector3(0, -((GridDimensions.y + 1) * numberPrefabWidth) / 2);
+			floorInstantiated.transform.localScale = new Vector3(((GridDimensions.x + 2) * numberPrefabWidth), floorInstantiated.transform.localScale.y); // sprite width will have to equal number prefab widths
+
+			wallsInstantiated = new List<GameObject>();
+			wallsInstantiated.Add (Instantiate(WallPrefab) as GameObject);
+			wallsInstantiated[0].transform.position = new Vector3(-((GridDimensions.x * numberPrefabWidth) / 2) - (numberPrefabWidth / 2), 0);
+			wallsInstantiated[0].transform.localScale = new Vector3(wallsInstantiated[0].transform.localScale.x, numberPrefabWidth * GridDimensions.y);
+			wallsInstantiated.Add (Instantiate(WallPrefab) as GameObject);
+			wallsInstantiated[1].transform.position = new Vector3(((GridDimensions.x * numberPrefabWidth) / 2) + (numberPrefabWidth / 2), 0);
+			wallsInstantiated[1].transform.localScale = new Vector3(wallsInstantiated[0].transform.localScale.x, numberPrefabWidth * GridDimensions.y);
+
+			Grid.Resize(GridDimensions, ((GridDimensions.y + 1) * numberPrefabWidth) / 2, numberPrefabWidth);
+
+
 //
 //			numbersInstantiated = new List<List<GameObject>>();
 //			float xOffset = -(GridDimensions.x * numberPrefabWidth) / 2;
@@ -72,10 +94,15 @@ public class MainScript : MonoBehaviour {
 	{
 		try
 		{
-			if(Grid.AnyOpenSpaces)
+			if(Time.realtimeSinceStartup > lastDrop + DropPauseInSeconds)
 			{
-				GameObject toAdd = Instantiate(NumberPrefabs[random.Next() % NumberPrefabs.Count()]) as GameObject;
-				Grid.Add(toAdd);
+				if(Grid.AnyOpenSpaces)
+				{
+					Debug.Log("test1");
+					GameObject toAdd = Instantiate(NumberPrefabs[random.Next() % NumberPrefabs.Count()]) as GameObject;
+					Grid.Add(toAdd);
+					lastDrop = Time.realtimeSinceStartup;
+				}
 			}
 		}
 		catch(Exception ex)

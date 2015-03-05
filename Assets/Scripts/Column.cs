@@ -21,7 +21,7 @@ namespace AssemblyCSharp
 
 		private int capacity;
 
-		public bool OpenSpaces{ get { return gameObjects.Count > 0; } }
+		public bool OpenSpaces{ get { return gameObjects.Count < capacity; } }
 
 		public void Add(GameObject go)
 		{
