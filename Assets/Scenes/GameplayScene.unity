@@ -203,7 +203,9 @@ MonoBehaviour:
   NumberPrefabs:
   - {fileID: 159938, guid: 7fdc5fce60fb0714eae77bc52f5b45a8, type: 2}
   - {fileID: 182906, guid: 5c578457f8f5db0489cc772eaa40286e, type: 2}
-  GridDimensions: {x: 12, y: 12}
+  - {fileID: 180354, guid: 35f263b01d4ea1540ba4bc579ddab5cd, type: 2}
+  - {fileID: 106788, guid: 9b5217bc7b185d64c98cacc6eeb8366f, type: 2}
+  GridDimensions: {x: 6, y: 6}
   DropPauseInSeconds: .5
 --- !u!4 &1959207027
 Transform:

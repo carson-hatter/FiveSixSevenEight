@@ -11,6 +11,7 @@ GameObject:
   - 212: {fileID: 21259938}
   - 50: {fileID: 5059938}
   - 61: {fileID: 6159938}
+  - 114: {fileID: 11414622}
   m_Layer: 0
   m_Name: NumberOnePrefab
   m_TagString: Untagged
@@ -36,7 +37,7 @@ Rigidbody2D:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 159938}
-  m_Mass: .100000001
+  m_Mass: 9.99999975e-05
   m_LinearDrag: 0
   m_AngularDrag: 0
   m_GravityScale: 1
@@ -58,6 +59,18 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: .949999988, y: 1}
+--- !u!114 &11414622
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 159938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d8e0be388ef5f440bc4e82a8bf854f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Weight: 50
 --- !u!212 &21259938
 SpriteRenderer:
   m_ObjectHideFlags: 1
