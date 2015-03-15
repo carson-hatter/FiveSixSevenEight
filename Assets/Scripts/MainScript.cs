@@ -11,6 +11,12 @@ public class MainScript : MonoBehaviour {
 	public GameObject FloorPrefab;
 	private GameObject floorInstantiated = null;
 
+	public GameObject ScoreboardPrefab;
+	private GameObject scoreboardInstantiated = null;
+
+	public GameObject MultiplierPrefab;
+	private GameObject multiplierBoardInstantiated = null;
+
 	public GameObject WallPrefab;
 	private List<GameObject> wallsInstantiated = null;
 
@@ -18,19 +24,33 @@ public class MainScript : MonoBehaviour {
 
 	public Vector2 GridDimensions;
 
-	//public float DropYCoord;
-
 	public float DropPauseInSeconds;
 
 	private float lastDrop;
 
 	private System.Random random;
 
-	// Use this for initialization
+	private List<GameObject> selectedNumbers = new List<GameObject>();
+
+	private bool isTouchDevice;
+
+	private int score;
+
+	private int multiplier;
+
 	void Start () 
 	{
 		try
 		{
+			score = 0;
+			multiplier = 1;
+
+#if UNITY_IOS || UNITY_ANDROID
+			isTouchDevice = true;
+#else
+			isTouchDevice = false;
+#endif
+
 			lastDrop = Time.realtimeSinceStartup;
 
 			random = new System.Random();
@@ -38,7 +58,8 @@ public class MainScript : MonoBehaviour {
 			if(NumberPrefabs.Length <= 0)
 				throw new NullReferenceException("No number prefabs found");
 
-			//NumberPrefabs.OrderByDescending(npf => npf.GetComponent<NumberScript>().Probability);
+			scoreboardInstantiated = Instantiate(ScoreboardPrefab) as GameObject;
+			multiplierBoardInstantiated = Instantiate(MultiplierPrefab) as GameObject;
 
 			float numberPrefabWidth = NumberPrefabs[0].GetComponent<SpriteRenderer>().bounds.size.x; // number prefab sprite will have to be square
 
@@ -83,11 +104,114 @@ public class MainScript : MonoBehaviour {
 		return toReturn;
 	}
 
-	// Update is called once per frame
+	bool MouseInput()
+	{
+		bool clearSelectedNumbersFlag = false;
+
+		if(Input.GetMouseButton(0))
+		{
+			Vector3 mosPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			
+			mosPos.z = 0;
+			
+			List<List<GameObject>> numsInstd = Grid.NumbersInstiated;
+			
+			for(int colIndex = 0; colIndex < numsInstd.Count(); colIndex++)
+			{
+				for(int rowIndex = 0; rowIndex < numsInstd[colIndex].Count; rowIndex++)
+				{
+					GameObject go = numsInstd[colIndex][rowIndex];
+
+					if(Vector3.Distance(mosPos, go.transform.position) <= go.GetComponent<CircleCollider2D>().bounds.size.x / 2)
+					{
+						if(selectedNumbers.Count > 0)
+						{
+							if(Vector3.Distance(go.transform.position, selectedNumbers.Last().transform.position) <= (Mathf.Sqrt(2) + 0.001))
+							{
+								NumberScript script = go.GetComponent<NumberScript>();
+								
+								if(!script.Selected)
+								{
+									script.Selected = true;
+									selectedNumbers.Add (go);
+									break;
+								}
+							}
+						}
+						else
+						{
+							NumberScript script = go.GetComponent<NumberScript>();
+							
+							if(!script.Selected)
+							{
+								script.Selected = true;
+								selectedNumbers.Add (go);
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			if(selectedNumbers.Count > 0)
+			{
+				clearSelectedNumbersFlag = true;
+			}
+		}
+
+		return clearSelectedNumbersFlag;
+	}
+
 	void Update () 
 	{
 		try
 		{
+			bool clearSelectedNumbers = false;
+			if(!isTouchDevice)
+				clearSelectedNumbers = MouseInput();
+
+			if(clearSelectedNumbers)
+			{
+				int tally = 0;
+
+				bool allSameColor = true;
+				string theColor = string.Empty;
+
+				for(int i = 0; i < selectedNumbers.Count; i++)
+				{
+					NumberScript selectedScript = selectedNumbers[i].GetComponent<NumberScript>();
+
+					if(selectedScript.Selected)
+					{
+						if(string.IsNullOrEmpty(theColor))
+							theColor = selectedScript.Color_;
+						else if(!string.Equals(theColor, selectedScript.Color_, StringComparison.OrdinalIgnoreCase))
+							allSameColor = false;
+
+						tally += selectedScript.BaseScore;
+
+						Grid.Remove(selectedNumbers[i].GetInstanceID());
+						Destroy(selectedNumbers[i]);
+					}
+				}
+
+				selectedNumbers.Clear();
+
+				Debug.Log("this should = 0  " + selectedNumbers.Count.ToString());
+
+				if(allSameColor)
+				{
+					multiplier++;
+					MultiplierScript.MultiplierToDisplay = multiplier;
+				}
+				Debug.Log("pre score " + score.ToString());
+				score += (tally * multiplier);
+				Debug.Log("post score " + score.ToString());
+				ScoreboardScript.ScoreToDisplay = score;
+			}
+
 			if(Time.realtimeSinceStartup > lastDrop + DropPauseInSeconds)
 			{
 				if(Grid.AnyOpenSpaces)

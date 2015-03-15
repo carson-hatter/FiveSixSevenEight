@@ -17,24 +17,31 @@ namespace AssemblyCSharp
 {
 	public class Column
 	{
-		private List<GameObject> gameObjects = new List<GameObject>();
+		public List<GameObject> NumbersInstantiated{ get; private set; }
 
 		private int capacity;
 
-		public bool OpenSpaces{ get { return gameObjects.Count < capacity; } }
+		public bool OpenSpaces{ get { return NumbersInstantiated.Count < capacity; } }
 
 		public void Add(GameObject go)
 		{
 			go.transform.position = origin;
-			gameObjects.Add (go);
+			NumbersInstantiated.Add (go);
+			NumbersInstantiated.OrderBy(n => n.transform.position.y);
 		}
 
 		private Vector3 origin;
 
 		public Column(Vector3 origin, int capacity)
 		{
+			NumbersInstantiated = new List<GameObject> ();
 			this.capacity = capacity;
 			this.origin = origin;
+		}
+
+		public void Remove(int goId)
+		{
+			NumbersInstantiated.Remove (NumbersInstantiated.Where (go => go.GetInstanceID () == goId).FirstOrDefault());
 		}
 	}
 }

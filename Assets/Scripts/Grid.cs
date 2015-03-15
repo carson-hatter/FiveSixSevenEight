@@ -28,6 +28,22 @@ namespace AssemblyCSharp
 			}
 		}
 
+		public static void Remove(int goId)
+		{
+			columns.First (c => c.NumbersInstantiated.Any (c2 => c2.GetInstanceID () == goId)).Remove (goId);
+		}
+
+		public static List<List<GameObject>> NumbersInstiated
+		{
+			get
+			{
+				List<List<GameObject>> toReturn = new List<List<GameObject>>();
+				foreach(Column c in columns)
+					toReturn.Add(c.NumbersInstantiated);
+				return toReturn; // 1ST DIMENSION = X (ASC.) 2ND DIMENSION = Y (ASC.) ([0][0] would be bottom left
+			}
+		}
+
 		public static void Resize(Vector2 desiredDims, float originY, float prefabWidth)
 		{
 			columns = new List<Column>();
