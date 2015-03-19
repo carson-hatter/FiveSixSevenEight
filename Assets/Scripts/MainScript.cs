@@ -22,6 +22,7 @@ public class MainScript : MonoBehaviour {
 
 	public GameObject [] NumberPrefabs;
 
+	public Vector2 GridOffset;
 	public Vector2 GridDimensions;
 
 	public float DropPauseInSeconds;
@@ -65,18 +66,18 @@ public class MainScript : MonoBehaviour {
 
 			floorInstantiated = Instantiate(FloorPrefab) as GameObject;
 
-			floorInstantiated.transform.position = new Vector3(0, -((GridDimensions.y + 1) * numberPrefabWidth) / 2);
+			floorInstantiated.transform.position = new Vector3(GridOffset.x, -((GridDimensions.y + 1) * numberPrefabWidth) / 2 + GridOffset.y);
 			floorInstantiated.transform.localScale = new Vector3(((GridDimensions.x + 2) * numberPrefabWidth), floorInstantiated.transform.localScale.y); // sprite width will have to equal number prefab widths
 
 			wallsInstantiated = new List<GameObject>();
 			wallsInstantiated.Add (Instantiate(WallPrefab) as GameObject);
-			wallsInstantiated[0].transform.position = new Vector3(-((GridDimensions.x * numberPrefabWidth) / 2) - (numberPrefabWidth / 2), 0);
+			wallsInstantiated[0].transform.position = new Vector3(-((GridDimensions.x * numberPrefabWidth) / 2) - (numberPrefabWidth / 2) + GridOffset.x, GridOffset.y);
 			wallsInstantiated[0].transform.localScale = new Vector3(wallsInstantiated[0].transform.localScale.x, numberPrefabWidth * GridDimensions.y);
 			wallsInstantiated.Add (Instantiate(WallPrefab) as GameObject);
-			wallsInstantiated[1].transform.position = new Vector3(((GridDimensions.x * numberPrefabWidth) / 2) + (numberPrefabWidth / 2), 0);
+			wallsInstantiated[1].transform.position = new Vector3(((GridDimensions.x * numberPrefabWidth) / 2) + (numberPrefabWidth / 2) + GridOffset.x, GridOffset.y);
 			wallsInstantiated[1].transform.localScale = new Vector3(wallsInstantiated[0].transform.localScale.x, numberPrefabWidth * GridDimensions.y);
 
-			Grid.Resize(GridDimensions, ((GridDimensions.y + 1) * numberPrefabWidth) / 2, numberPrefabWidth);
+			Grid.Resize(GridDimensions, (((GridDimensions.y + 1) * numberPrefabWidth) / 2) + GridOffset.y, numberPrefabWidth);
 
 		}
 		catch(Exception ex)
@@ -199,16 +200,14 @@ public class MainScript : MonoBehaviour {
 
 				selectedNumbers.Clear();
 
-				Debug.Log("this should = 0  " + selectedNumbers.Count.ToString());
-
 				if(allSameColor)
 				{
 					multiplier++;
 					MultiplierScript.MultiplierToDisplay = multiplier;
 				}
-				Debug.Log("pre score " + score.ToString());
+
 				score += (tally * multiplier);
-				Debug.Log("post score " + score.ToString());
+
 				ScoreboardScript.ScoreToDisplay = score;
 			}
 

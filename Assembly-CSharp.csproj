@@ -46,13 +46,13 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\MultiplierScript.cs" />
-     <Compile Include="Assets\ScoreboardScript.cs" />
      <Compile Include="Assets\Scripts\Column.cs" />
      <Compile Include="Assets\Scripts\Grid.cs" />
      <Compile Include="Assets\Scripts\GridScript.cs" />
      <Compile Include="Assets\Scripts\MainScript.cs" />
+     <Compile Include="Assets\Scripts\MultiplierScript.cs" />
      <Compile Include="Assets\Scripts\NumberScript.cs" />
+     <Compile Include="Assets\Scripts\ScoreboardScript.cs" />
      <None Include="Assets\Plugins\Android\unityads\proguard-project.txt" />
      <None Include="Assets\Plugins\Android\unityads\build.xml" />
      <None Include="Assets\Plugins\Android\unityads\res\values\strings.xml" />

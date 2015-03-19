@@ -22,7 +22,7 @@ public class MultiplierScript : MonoBehaviour {
 		try
 		{
 			text = GetComponent<TextMesh>();
-			MultiplierToDisplay = 0;
+			MultiplierToDisplay = 1;
 		}
 		catch(System.Exception ex)
 		{
