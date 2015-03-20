@@ -53,6 +53,7 @@
      <Compile Include="Assets\Scripts\MultiplierScript.cs" />
      <Compile Include="Assets\Scripts\NumberScript.cs" />
      <Compile Include="Assets\Scripts\ScoreboardScript.cs" />
+     <Compile Include="Assets\Scripts\TargetNumberScript.cs" />
      <None Include="Assets\Plugins\Android\unityads\proguard-project.txt" />
      <None Include="Assets\Plugins\Android\unityads\build.xml" />
      <None Include="Assets\Plugins\Android\unityads\res\values\strings.xml" />

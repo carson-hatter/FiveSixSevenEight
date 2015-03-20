@@ -3,16 +3,19 @@ using System.Collections;
 
 public class MultiplierScript : MonoBehaviour {
 	
-	private static int multiplierToDisplay;
+	private static int multiplierToDisplay = -1;
 	public static int MultiplierToDisplay
 	{
 		get{ return multiplierToDisplay;}
 		set
 		{
 			multiplierToDisplay = value;
-			text.text = "x" + multiplierToDisplay.ToString();
+
+			text.text = string.Format(MultiplierText, multiplierToDisplay.ToString());
 		}
 	}
+
+	public static string MultiplierText = string.Empty;
 	
 	private static TextMesh text;
 	
@@ -22,7 +25,7 @@ public class MultiplierScript : MonoBehaviour {
 		try
 		{
 			text = GetComponent<TextMesh>();
-			MultiplierToDisplay = 1;
+			text.text = string.Empty;
 		}
 		catch(System.Exception ex)
 		{

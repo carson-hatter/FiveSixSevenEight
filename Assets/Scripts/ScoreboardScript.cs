@@ -3,16 +3,19 @@ using System.Collections;
 
 public class ScoreboardScript : MonoBehaviour {
 
-	private static int scoreToDisplay;
+	private static int scoreToDisplay = -1;
 	public static int ScoreToDisplay
 	{
 		get{ return scoreToDisplay;}
 		set
 		{
 			scoreToDisplay = value;
-			text.text = "Score: " + scoreToDisplay.ToString();
+		
+			text.text = string.Format(ScoreText,scoreToDisplay.ToString());
 		}
 	}
+
+	public static string ScoreText = string.Empty;
 
 	private static TextMesh text;
 
@@ -22,7 +25,7 @@ public class ScoreboardScript : MonoBehaviour {
 		try
 		{
 			text = GetComponent<TextMesh>();
-			ScoreToDisplay = 0;
+			text.text = string.Empty;
 		}
 		catch(System.Exception ex)
 		{

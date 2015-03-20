@@ -17,6 +17,13 @@ public class MainScript : MonoBehaviour {
 	public GameObject MultiplierPrefab;
 	private GameObject multiplierBoardInstantiated = null;
 
+	public GameObject TargetNumberPrefab;
+	private GameObject targetNumberInstantiated = null;
+
+	public string MultiplierText;
+	public string ScoreboardText;
+	public string TargetNumberText;
+
 	public GameObject WallPrefab;
 	private List<GameObject> wallsInstantiated = null;
 
@@ -36,22 +43,18 @@ public class MainScript : MonoBehaviour {
 	private bool isTouchDevice;
 
 	private int score;
-
+	private int targetNumber;
 	private int multiplier;
 
 	void Start () 
 	{
 		try
 		{
-			score = 0;
-			multiplier = 1;
-
 #if UNITY_IOS || UNITY_ANDROID
 			isTouchDevice = true;
 #else
 			isTouchDevice = false;
 #endif
-
 			lastDrop = Time.realtimeSinceStartup;
 
 			random = new System.Random();
@@ -61,6 +64,13 @@ public class MainScript : MonoBehaviour {
 
 			scoreboardInstantiated = Instantiate(ScoreboardPrefab) as GameObject;
 			multiplierBoardInstantiated = Instantiate(MultiplierPrefab) as GameObject;
+			targetNumberInstantiated = Instantiate(TargetNumberPrefab) as GameObject;
+			score = 0;
+			multiplier = 1;
+			targetNumber = 5;
+			ScoreboardScript.ScoreText = ScoreboardText;
+			MultiplierScript.MultiplierText = MultiplierText;
+			TargetNumberScript.TargetText = TargetNumberText;
 
 			float numberPrefabWidth = NumberPrefabs[0].GetComponent<SpriteRenderer>().bounds.size.x; // number prefab sprite will have to be square
 
@@ -169,6 +179,13 @@ public class MainScript : MonoBehaviour {
 	{
 		try
 		{
+			if(ScoreboardScript.ScoreToDisplay != score)
+				ScoreboardScript.ScoreToDisplay = score;
+			if(MultiplierScript.MultiplierToDisplay != multiplier)
+				MultiplierScript.MultiplierToDisplay = multiplier;
+			if(TargetNumberScript.TargetToDisplay != targetNumber)
+				TargetNumberScript.TargetToDisplay = targetNumber;
+
 			bool clearSelectedNumbers = false;
 			if(!isTouchDevice)
 				clearSelectedNumbers = MouseInput();
@@ -192,23 +209,39 @@ public class MainScript : MonoBehaviour {
 							allSameColor = false;
 
 						tally += selectedScript.BaseScore;
-
-						Grid.Remove(selectedNumbers[i].GetInstanceID());
-						Destroy(selectedNumbers[i]);
 					}
 				}
 
-				selectedNumbers.Clear();
-
-				if(allSameColor)
+				if(tally == targetNumber)
 				{
-					multiplier++;
-					MultiplierScript.MultiplierToDisplay = multiplier;
+					for(int i = 0; i < selectedNumbers.Count; i++)
+					{
+						Grid.Remove(selectedNumbers[i].GetInstanceID());
+						Destroy(selectedNumbers[i]);
+					}
+
+					selectedNumbers.Clear();
+
+					if(allSameColor)
+					{
+						multiplier++;
+					}
+
+					score += (tally * multiplier);
+
+					targetNumber++;
+					if(targetNumber > 8)
+						targetNumber = 5;
 				}
+				else
+				{
+					foreach(GameObject targetNumPF in selectedNumbers)
+					{
+						targetNumPF.GetComponent<NumberScript>().Selected = false;
+					}
 
-				score += (tally * multiplier);
-
-				ScoreboardScript.ScoreToDisplay = score;
+					selectedNumbers.Clear();
+				}
 			}
 
 			if(Time.realtimeSinceStartup > lastDrop + DropPauseInSeconds)
