@@ -17,12 +17,21 @@ public class MainScript : MonoBehaviour {
 	public GameObject MultiplierPrefab;
 	private GameObject multiplierBoardInstantiated = null;
 
-	public GameObject TargetNumberPrefab;
-	private GameObject targetNumberInstantiated = null;
+	public GameObject NumberFivePrefab;
+	private GameObject numFiveInst;
+	public GameObject NumberSixPrefab;
+	private GameObject numSixInst;
+	public GameObject NumberSevenPrefab;
+	private GameObject numSevenInst;
+	public GameObject NumberEightPrefab;
+	private GameObject numEightInst;
+
+	public GameObject NextNumberDisplayPrefab;
+	private GameObject nextNumDisplayInst;
+	private NextNumberDto nextNum;
 
 	public string MultiplierText;
 	public string ScoreboardText;
-	public string TargetNumberText;
 
 	public GameObject WallPrefab;
 	private List<GameObject> wallsInstantiated = null;
@@ -40,8 +49,6 @@ public class MainScript : MonoBehaviour {
 
 	private List<GameObject> selectedNumbers = new List<GameObject>();
 
-	private bool isTouchDevice;
-
 	private int score;
 	private int targetNumber;
 	private int multiplier;
@@ -50,11 +57,6 @@ public class MainScript : MonoBehaviour {
 	{
 		try
 		{
-#if UNITY_IOS || UNITY_ANDROID
-			isTouchDevice = true;
-#else
-			isTouchDevice = false;
-#endif
 			lastDrop = Time.realtimeSinceStartup;
 
 			random = new System.Random();
@@ -64,13 +66,16 @@ public class MainScript : MonoBehaviour {
 
 			scoreboardInstantiated = Instantiate(ScoreboardPrefab) as GameObject;
 			multiplierBoardInstantiated = Instantiate(MultiplierPrefab) as GameObject;
-			targetNumberInstantiated = Instantiate(TargetNumberPrefab) as GameObject;
+			numFiveInst = Instantiate(NumberFivePrefab) as GameObject;
+			numSixInst = Instantiate(NumberSixPrefab) as GameObject;
+			numSevenInst = Instantiate(NumberSevenPrefab) as GameObject;
+			numEightInst = Instantiate(NumberEightPrefab) as GameObject;
 			score = 0;
 			multiplier = 1;
 			targetNumber = 5;
+			Update5678();
 			ScoreboardScript.ScoreText = ScoreboardText;
 			MultiplierScript.MultiplierText = MultiplierText;
-			TargetNumberScript.TargetText = TargetNumberText;
 
 			float numberPrefabWidth = NumberPrefabs[0].GetComponent<SpriteRenderer>().bounds.size.x; // number prefab sprite will have to be square
 
@@ -87,8 +92,9 @@ public class MainScript : MonoBehaviour {
 			wallsInstantiated[1].transform.position = new Vector3(((GridDimensions.x * numberPrefabWidth) / 2) + (numberPrefabWidth / 2) + GridOffset.x, GridOffset.y);
 			wallsInstantiated[1].transform.localScale = new Vector3(wallsInstantiated[0].transform.localScale.x, numberPrefabWidth * GridDimensions.y);
 
-			Grid.Resize(GridDimensions, (((GridDimensions.y + 1) * numberPrefabWidth) / 2) + GridOffset.y, numberPrefabWidth);
+			Grid.Resize(GridDimensions, (((GridDimensions.y + 1) * numberPrefabWidth) / 2) + GridOffset.y, numberPrefabWidth, GridOffset.x);
 
+			nextNumDisplayInst = Instantiate(NextNumberDisplayPrefab) as GameObject;
 		}
 		catch(Exception ex)
 		{
@@ -96,17 +102,17 @@ public class MainScript : MonoBehaviour {
 		}
 	}
 
-	GameObject GetNumberPrefab()
+	NextNumberDto GetNumberPrefab()
 	{
 		int totalWeight = NumberPrefabs.Sum (np => np.GetComponent<NumberScript> ().Weight);
 		int randomNumber = random.Next (0, totalWeight);
 
-		GameObject toReturn = null;
+		NextNumberDto toReturn = null;
 		foreach(GameObject go in NumberPrefabs)
 		{
 			if(randomNumber < go.GetComponent<NumberScript>().Weight)
 			{
-				toReturn = go;
+				toReturn = new NextNumberDto(go.GetComponent<NumberScript>().Color_, go.GetComponent<NumberScript>().Shape, go.GetComponent<NumberScript>().UnselectedTexture, go.GetComponent<NumberScript>().Number);
 				break;
 			}
 			randomNumber -= go.GetComponent<NumberScript>().Weight;
@@ -115,15 +121,55 @@ public class MainScript : MonoBehaviour {
 		return toReturn;
 	}
 
-	bool MouseInput()
+	void Update5678()
+	{
+		if(targetNumber == 5)
+		{
+			numFiveInst.GetComponent<TargetNumberScript>().IsTarget = true;
+			numSixInst.GetComponent<TargetNumberScript>().IsTarget = false;
+			numSevenInst.GetComponent<TargetNumberScript>().IsTarget = false;
+			numEightInst.GetComponent<TargetNumberScript>().IsTarget = false;
+			return;
+		}
+		if(targetNumber == 6)
+		{
+			numFiveInst.GetComponent<TargetNumberScript>().IsTarget = false;
+			numSixInst.GetComponent<TargetNumberScript>().IsTarget = true;
+			numSevenInst.GetComponent<TargetNumberScript>().IsTarget = false;
+			numEightInst.GetComponent<TargetNumberScript>().IsTarget = false;
+			return;
+		}
+		if(targetNumber == 7)
+		{
+			numFiveInst.GetComponent<TargetNumberScript>().IsTarget = false;
+			numSixInst.GetComponent<TargetNumberScript>().IsTarget = false;
+			numSevenInst.GetComponent<TargetNumberScript>().IsTarget = true;
+			numEightInst.GetComponent<TargetNumberScript>().IsTarget = false;
+			return;
+		}
+		if(targetNumber == 8)
+		{
+			numFiveInst.GetComponent<TargetNumberScript>().IsTarget = false;
+			numSixInst.GetComponent<TargetNumberScript>().IsTarget = false;
+			numSevenInst.GetComponent<TargetNumberScript>().IsTarget = false;
+			numEightInst.GetComponent<TargetNumberScript>().IsTarget = true;
+			return;
+		}
+	}
+
+	bool UserInput()
 	{
 		bool clearSelectedNumbersFlag = false;
 
-		if(Input.GetMouseButton(0))
+		if(Input.GetMouseButton(0) || Input.touches.Count() > 0)
 		{
-			Vector3 mosPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			
-			mosPos.z = 0;
+			Vector3 inPos;
+#if UNITY_ANDROID || UNITY_IOS
+			inPos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
+#else
+			inPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+#endif
+			inPos.z = 0;
 			
 			List<List<GameObject>> numsInstd = Grid.NumbersInstiated;
 			
@@ -132,8 +178,7 @@ public class MainScript : MonoBehaviour {
 				for(int rowIndex = 0; rowIndex < numsInstd[colIndex].Count; rowIndex++)
 				{
 					GameObject go = numsInstd[colIndex][rowIndex];
-
-					if(Vector3.Distance(mosPos, go.transform.position) <= go.GetComponent<CircleCollider2D>().bounds.size.x / 2)
+					if(Vector3.Distance(inPos, go.transform.position) <= go.GetComponent<CircleCollider2D>().bounds.size.x / 2)
 					{
 						if(selectedNumbers.Count > 0)
 						{
@@ -183,12 +228,10 @@ public class MainScript : MonoBehaviour {
 				ScoreboardScript.ScoreToDisplay = score;
 			if(MultiplierScript.MultiplierToDisplay != multiplier)
 				MultiplierScript.MultiplierToDisplay = multiplier;
-			if(TargetNumberScript.TargetToDisplay != targetNumber)
-				TargetNumberScript.TargetToDisplay = targetNumber;
 
 			bool clearSelectedNumbers = false;
-			if(!isTouchDevice)
-				clearSelectedNumbers = MouseInput();
+
+			clearSelectedNumbers = UserInput();
 
 			if(clearSelectedNumbers)
 			{
@@ -196,6 +239,9 @@ public class MainScript : MonoBehaviour {
 
 				bool allSameColor = true;
 				string theColor = string.Empty;
+
+				bool allSameShape = true;
+				string theShape = string.Empty;
 
 				for(int i = 0; i < selectedNumbers.Count; i++)
 				{
@@ -207,6 +253,11 @@ public class MainScript : MonoBehaviour {
 							theColor = selectedScript.Color_;
 						else if(!string.Equals(theColor, selectedScript.Color_, StringComparison.OrdinalIgnoreCase))
 							allSameColor = false;
+
+						if(string.IsNullOrEmpty(theShape))
+							theShape = selectedScript.Shape;
+						else if(!string.Equals(theShape, selectedScript.Shape, StringComparison.OrdinalIgnoreCase))
+							allSameShape = false;
 
 						tally += selectedScript.BaseScore;
 					}
@@ -222,7 +273,18 @@ public class MainScript : MonoBehaviour {
 
 					selectedNumbers.Clear();
 
-					if(allSameColor)
+					if(allSameColor && allSameShape)
+					{
+						if(multiplier == 1)
+							multiplier += 3;
+						else
+							multiplier*=multiplier;
+					}
+					else if(allSameColor)
+					{
+						multiplier++;
+					}
+					else if(allSameShape)
 					{
 						multiplier++;
 					}
@@ -232,6 +294,8 @@ public class MainScript : MonoBehaviour {
 					targetNumber++;
 					if(targetNumber > 8)
 						targetNumber = 5;
+
+					Update5678();
 				}
 				else
 				{
@@ -248,9 +312,14 @@ public class MainScript : MonoBehaviour {
 			{
 				if(Grid.AnyOpenSpaces)
 				{
-					GameObject toAdd = Instantiate(GetNumberPrefab()) as GameObject;
-					Grid.Add(toAdd);
+					if(nextNum == null)
+						nextNum = GetNumberPrefab();
+
+					Grid.Add (Instantiate(NumberPrefabs.First(n => n.GetComponent<NumberScript>().Color_ == nextNum.Color_ && n.GetComponent<NumberScript>().Shape == nextNum.Shape && n.GetComponent<NumberScript>().Number == nextNum.Number)) as GameObject);
 					lastDrop = Time.realtimeSinceStartup;
+
+					nextNum = GetNumberPrefab();
+					nextNumDisplayInst.GetComponent<NextNumberDisplayScript>().Sprite_ = nextNum.Sprite_;
 				}
 			}
 		}

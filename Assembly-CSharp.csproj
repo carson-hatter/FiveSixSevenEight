@@ -51,6 +51,8 @@
      <Compile Include="Assets\Scripts\GridScript.cs" />
      <Compile Include="Assets\Scripts\MainScript.cs" />
      <Compile Include="Assets\Scripts\MultiplierScript.cs" />
+     <Compile Include="Assets\Scripts\NextNumberDisplayScript.cs" />
+     <Compile Include="Assets\Scripts\NextNumberDto.cs" />
      <Compile Include="Assets\Scripts\NumberScript.cs" />
      <Compile Include="Assets\Scripts\ScoreboardScript.cs" />
      <Compile Include="Assets\Scripts\TargetNumberScript.cs" />

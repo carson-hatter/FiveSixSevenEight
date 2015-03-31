@@ -201,10 +201,14 @@ MonoBehaviour:
   FloorPrefab: {fileID: 129682, guid: 4c9274e0da29fca45a026c3df4c8a3c8, type: 2}
   ScoreboardPrefab: {fileID: 117286, guid: 110ea19943d415740a64638540e38fee, type: 2}
   MultiplierPrefab: {fileID: 117286, guid: 0899838bee8b03c48ae397bad0f78009, type: 2}
-  TargetNumberPrefab: {fileID: 132882, guid: a9bd013376034454092299d00fa24f63, type: 2}
+  NumberFivePrefab: {fileID: 184314, guid: 314cebaecc17e5a4998862d3d7b12399, type: 2}
+  NumberSixPrefab: {fileID: 184314, guid: de16b417de6d2f44a81ede294ad12a76, type: 2}
+  NumberSevenPrefab: {fileID: 184314, guid: 97624399a24aae341a9a992ff92d7816, type: 2}
+  NumberEightPrefab: {fileID: 184314, guid: 3add36ff7c0e2b945b483789c261b06f, type: 2}
+  NextNumberDisplayPrefab: {fileID: 174742, guid: 3d26fc2389ce6fd4f8ee3c182b407426,
+    type: 2}
   MultiplierText: Multi:{0}
   ScoreboardText: Score:{0}
-  TargetNumberText: Target:{0}
   WallPrefab: {fileID: 109232, guid: c693ee7d81fcdf44087b015c7835d2af, type: 2}
   NumberPrefabs:
   - {fileID: 182906, guid: 5c578457f8f5db0489cc772eaa40286e, type: 2}
@@ -215,9 +219,9 @@ MonoBehaviour:
   - {fileID: 106788, guid: 9b5217bc7b185d64c98cacc6eeb8366f, type: 2}
   - {fileID: 180354, guid: 35f263b01d4ea1540ba4bc579ddab5cd, type: 2}
   - {fileID: 159938, guid: 7fdc5fce60fb0714eae77bc52f5b45a8, type: 2}
-  GridOffset: {x: 0, y: -1}
-  GridDimensions: {x: 4, y: 4}
-  DropPauseInSeconds: .5
+  GridOffset: {x: 0, y: -2}
+  GridDimensions: {x: 3, y: 4}
+  DropPauseInSeconds: 2
 --- !u!4 &1959207027
 Transform:
   m_ObjectHideFlags: 0

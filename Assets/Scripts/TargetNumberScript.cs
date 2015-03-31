@@ -2,30 +2,39 @@
 using System.Collections;
 
 public class TargetNumberScript : MonoBehaviour {
-	
-	private static int targetToDisplay = -1;
-	public static int TargetToDisplay
+	public Sprite TargetedTexture;
+	public Sprite NontargetedTexture;
+	public int Number;
+
+	private bool isTarget;
+	public bool IsTarget
 	{
-		get{ return targetToDisplay;}
+		get{ return isTarget;}
 		set
 		{
-			targetToDisplay = value;
+			if(this.GetComponent<SpriteRenderer>()!=null)
+			{
+				isTarget = value;
 
-			text.text = string.Format(TargetText, targetToDisplay.ToString());
+				if(isTarget)
+					this.GetComponent<SpriteRenderer>().sprite = TargetedTexture;
+				else
+					this.GetComponent<SpriteRenderer>().sprite = NontargetedTexture;
+
+
+				//Debug.Log(Number.ToString() + " ***** " + isTarget.ToString() + " ----- " + sprite.sprite.name);
+			}
 		}
 	}
 	
-	public static string TargetText = string.Empty;
-	
-	private static TextMesh text;
+	private static SpriteRenderer sprite;
 	
 	// Use this for initialization
-	void Start () 
+	void Awake () 
 	{
 		try
 		{
-			text = GetComponent<TextMesh>();
-			text.text = string.Empty;
+			sprite = GetComponent<SpriteRenderer>();
 		}
 		catch(System.Exception ex)
 		{

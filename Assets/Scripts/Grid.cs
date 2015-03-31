@@ -44,11 +44,11 @@ namespace AssemblyCSharp
 			}
 		}
 
-		public static void Resize(Vector2 desiredDims, float originY, float prefabWidth)
+		public static void Resize(Vector2 desiredDims, float originY, float prefabWidth, float xOffset)
 		{
 			columns = new List<Column>();
 
-			float originX = -((desiredDims.x * prefabWidth) / 2);
+			float originX = -((desiredDims.x * prefabWidth) / 2) + xOffset;
 
 			originX += prefabWidth / 2;
 

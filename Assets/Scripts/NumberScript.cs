@@ -12,6 +12,8 @@ public class NumberScript : MonoBehaviour {
 
 	public string Color_;
 
+	public string Shape;
+
 	public int BaseScore;
 
 	public Sprite UnselectedTexture;
